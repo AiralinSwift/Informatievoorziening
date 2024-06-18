@@ -1,1 +1,40 @@
 1
+
+3. cd /home
+
+4. vi /etc/samba/smb.conf 
+“hier moeten nog twee regels toegevoegd worden” 
+[Administratie] 
+path = /home/Administratie 
+writeable = yes 
+valid user = @administratie,@verkoop 
+[Verkoop] 
+path = /home/Verkoop 
+writeable = yes 
+valid user = @verkoop,@administratie 
+sla dit op “ESC daarna :wq! En druk op enter”
+
+5. setfacl -m g:administratie:r-x Verkoop
+6. setfacl -m g:verkoop:r-x Administratie
+7. systemctl restart smb.service
+
+create backup
+
+vi backup.sh
+cat backup.sh
+
+#!/bin/bash
+rsync -av /home/share1 /tmp/backup
+rsync -av /home/share2 /tmp/backup
+rsync -av /home/ /tmp/backup
+
+chmod +x backup.sh
+ls -l (om te kijken of de backups er in staan)
+
+crontab -e
+
+0 0 * * * /home/backup.sh
+
+setfacl -m g:groepa:r-x share2
+setfacl -m g:groepb:r-x share1
+
